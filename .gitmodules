@@ -1,0 +1,9 @@
+[submodule "3rdparty/boost_type_traits"]
+	path = 3rdparty/boost_type_traits
+	url = https://github.com/boostorg/type_traits
+[submodule "3rdparty/boost_config"]
+	path = 3rdparty/boost_config
+	url = https://github.com/boostorg/config
+[submodule "3rdparty/boost_static_assert"]
+	path = 3rdparty/boost_static_assert
+	url = https://github.com/boostorg/static_assert
