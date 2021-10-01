@@ -9,8 +9,7 @@
 #include <memory>
 #include <functional>
 
-#include "boost/type_traits/is_abstract.hpp"
-#include "boost/type_traits.hpp"
+#include "boost/type_traits/is_base_and_derived.hpp"
 
 namespace stm {
     template<typename CONTEXT>
@@ -18,7 +17,7 @@ namespace stm {
     public:
         virtual ~VirtualAbstractState() = default;
 
-        virtual std::string name() = 0;
+        [[nodiscard]] virtual std::string name() const = 0;
 
         virtual void on_enter(std::shared_ptr<CONTEXT> context) {
             std::cout << "Default on_enter for " << this->name() << '\n';
