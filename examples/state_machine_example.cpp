@@ -1,10 +1,5 @@
-#include <string>
-#include <optional>
-
 #include "state_machine.h"
-
-namespace {
-}
+#include "example_context.h"
 
 int main() {
 

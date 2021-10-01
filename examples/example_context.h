@@ -1,7 +1,3 @@
-//
-// Created by split on 10/1/21.
-//
-
 #ifndef STATEY_EXAMPLE_CONTEXT_H
 #define STATEY_EXAMPLE_CONTEXT_H
 
@@ -9,42 +5,35 @@
 #include <optional>
 #include <memory>
 
-#include "abstract_example_state.h"
-#include "starting_state.h"
 #include "state_machine.h"
 
-namespace stm_example {
-    enum class FailureReason {
-        NONE,
-        NO_NETWORK,
-        FILE_NOT_FOUND
-    };
+#include "abstract_example_state.h"
+#include "starting_state.h"
 
-    enum class DownloadTrigger {
-        START_DOWNLOADING,
-        DOWNLOAD_FAILED,
-        DOWNLOAD_FINISHED
-    };
+class ExampleContext: public std::enable_shared_from_this<ExampleContext> {
+private:
+    stm_example::FailureReason failure_reason;
+    std::optional<stm_example::FileContents> file_contents;
+    std::shared_ptr<stm::StateMachine<AbstractExampleState, ExampleContext, stm_example::DownloadTrigger>> state_machine;
 
-    using FileContents = std::string;
+public:
 
-    class ExampleContext {
-    private:
-        FailureReason failure_reason = FailureReason::NONE;
-        std::optional<FileContents> file_context = {};
-        std::shared_ptr<stm::StateMachine<AbstractExampleState, ExampleContext, DownloadTrigger>> state_machine;
+    ExampleContext() {
+        failure_reason = stm_example::FailureReason::NONE;
+        file_contents = {};
+        auto current_state = std::make_shared<StartingState>();
+        state_machine = stm::StateMachine<AbstractExampleState, ExampleContext, stm_example::DownloadTrigger>::builder<StartingState>(current_state, std::enable_shared_from_this<ExampleContext>::shared_from_this(), AbstractExampleState::trigger_map());
+    }
 
-    public:
+    void start_downloading(const std::string &url) const {
+        std::cout << "Downloading: " << url << '\n';
+//        this->state_machine.on_trigger(stm_example::DownloadTrigger::START_DOWNLOADING);
+    }
 
-        void start_downloading(const std::string &url) const {
-            std::cout << "Downloading: " << url << '\n';
-            this->state_machine.on_trigger(DownloadTrigger::START_DOWNLOADING);
-        }
+    void download_failed(const stm_example::FailureReason &reason) {
+        this->failure_reason = reason;
+    }
+};
 
-        void download_failed(const FailureReason &reason) {
-            this->failureReason = reason;
-        }
-    };
-}
 
 #endif //STATEY_EXAMPLE_CONTEXT_H

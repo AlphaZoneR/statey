@@ -21,7 +21,7 @@ namespace {
             return nullptr;
         }
 
-        std::string name() override {
+        std::string name() const override {
             return "StartingState";
         }
     };
@@ -32,7 +32,7 @@ namespace {
             return nullptr;
         }
 
-        std::string name() override {
+        [[nodiscard]] std::string name() const override {
             return "StartingState";
         }
     };
@@ -135,7 +135,7 @@ namespace {
             was_i_called = true;
         }
 
-        std::string name() override {
+        std::string name() const override {
             return "MockState";
         }
     };

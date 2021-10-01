@@ -26,7 +26,7 @@ namespace stm {
 
     template<typename ABSTRACT_STATE, typename CONTEXT, typename ... ARGS>
     using FUNC_TYPE = std::function<std::shared_ptr<ABSTRACT_STATE>(ABSTRACT_STATE *, std::shared_ptr<CONTEXT>,
-                                                                    ARGS...)>;
+                                                                    ARGS...)>*;
 
     template<
             typename ABSTRACT_STATE,
