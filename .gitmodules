@@ -7,3 +7,6 @@
 [submodule "3rdparty/boost_static_assert"]
 	path = 3rdparty/boost_static_assert
 	url = https://github.com/boostorg/static_assert
+[submodule "3rdparty/google_test"]
+	path = 3rdparty/google_test
+	url = https://github.com/google/googletest

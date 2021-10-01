@@ -1,9 +1,5 @@
-//
-// Created by split on 9/30/21.
-//
-
-#ifndef STATEY_STATE_MACHINE_HPP
-#define STATEY_STATE_MACHINE_HPP
+#ifndef STATEY_STATE_MACHINE_H
+#define STATEY_STATE_MACHINE_H
 
 #include <map>
 #include <iostream>
@@ -24,13 +20,13 @@ namespace stm {
 
         virtual std::string name() = 0;
 
-        virtual void on_enter(std::shared_ptr <CONTEXT> context) {
+        virtual void on_enter(std::shared_ptr<CONTEXT> context) {
             std::cout << "Default on_enter for " << this->name() << '\n';
         }
     };
 
     template<typename ABSTRACT_STATE, typename CONTEXT, typename ... ARGS>
-    using FUNC_TYPE = std::function<std::shared_ptr<ABSTRACT_STATE>(ABSTRACT_STATE * , std::shared_ptr < CONTEXT > ,
+    using FUNC_TYPE = std::function<std::shared_ptr<ABSTRACT_STATE>(ABSTRACT_STATE *, std::shared_ptr<CONTEXT>,
                                                                     ARGS...)>;
 
     template<
@@ -41,21 +37,21 @@ namespace stm {
     >
     class StateMachine {
     private:
-
         using CALLBACK_TYPE = FUNC_TYPE<ABSTRACT_STATE, CONTEXT>;
 
-        std::shared_ptr <ABSTRACT_STATE> current_state;
-        std::shared_ptr <CONTEXT> context;
-        std::map <TRIGGER, CALLBACK_TYPE> trigger_map;
+        std::shared_ptr<ABSTRACT_STATE> current_state;
+        std::shared_ptr<CONTEXT> context;
+        std::map<TRIGGER, CALLBACK_TYPE> trigger_map;
 
     public:
-        StateMachine(std::shared_ptr <ABSTRACT_STATE> current_state, std::shared_ptr <CONTEXT> context,
-                     std::map <TRIGGER, CALLBACK_TYPE> trigger_map) : current_state(current_state), context(context),
-                                                                      trigger_map(trigger_map) {
+        StateMachine(std::shared_ptr<ABSTRACT_STATE> starting_state, std::shared_ptr<CONTEXT> context,
+                     std::map<TRIGGER, CALLBACK_TYPE> trigger_map) : current_state(starting_state), context(context),
+                                                                     trigger_map(trigger_map) {
+            starting_state->on_enter(context);
         }
 
         template<typename ... ARGS>
-        void on_event(TRIGGER trigger, ARGS ... args) {
+        void on_trigger(TRIGGER trigger, ARGS ... args) {
             auto trigger_executor_iterator = trigger_map.find(trigger);
 
             if (trigger_executor_iterator != trigger_map.end()) {
@@ -81,15 +77,19 @@ namespace stm {
             }
         }
 
+        std::shared_ptr<ABSTRACT_STATE> get_current_state() const {
+            return this->current_state;
+        }
+
     public:
         template<typename BASE_STATE>
-        static std::shared_ptr <StateMachine<ABSTRACT_STATE, CONTEXT, TRIGGER>>
+        static std::shared_ptr<StateMachine<ABSTRACT_STATE, CONTEXT, TRIGGER>>
         builder(
-                std::shared_ptr <BASE_STATE> baseState,
-                std::shared_ptr <CONTEXT> context,
-                std::map <TRIGGER, CALLBACK_TYPE> trigger_mappings) {
+                std::shared_ptr<BASE_STATE> baseState,
+                std::shared_ptr<CONTEXT> context,
+                std::map<TRIGGER, CALLBACK_TYPE> trigger_mappings) {
             return std::make_shared<StateMachine>(baseState, context, trigger_mappings);
         }
     };
 }
-#endif //STATEY_STATE_MACHINE_HPP
+#endif //STATEY_STATE_MACHINE_H
